@@ -27,8 +27,12 @@ def test_one_args(
     fn: Tuple[str, Callable[[float], float], Callable[[Tensor], Tensor]], t1: Tensor
 ) -> None:
     """Test one-arg functions compared to floats"""
+
     name, base_fn, tensor_fn = fn
+    print("NAME: ", name)
+    print("BEFORE:", t1)
     t2 = tensor_fn(t1)
+    print("AFTER:", t2)
     for ind in t2._tensor.indices():
         assert_close(t2[ind], base_fn(t1[ind]))
 
@@ -119,6 +123,7 @@ def test_two_grad_broadcast(
     """Test the grad of a two argument function"""
     name, base_fn, tensor_fn = fn
     t1, t2 = ts
+    print("FOR FN", fn)
     grad_check(tensor_fn, t1, t2)
 
     # broadcast check

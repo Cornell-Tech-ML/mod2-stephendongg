@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.9, pytest-8.3.2, pluggy-1.5.0
+rootdir: /Users/stephen/Desktop/Classes2024/MLE/mod2-stephendongg
+configfile: pyproject.toml
+plugins: hypothesis-6.54.0, env-1.1.4
+collected 68 items / 38 deselected / 30 selected
+
+tests/test_tensor.py ..............................                      [100%]
+
+====================== 30 passed, 38 deselected in 10.67s ======================
