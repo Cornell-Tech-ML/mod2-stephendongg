@@ -407,7 +407,7 @@ class Sum(Function):
         return a.f.add_reduce(a, int(dim.item()))
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Computes the backward pass of sum.
 
         Args:
@@ -417,10 +417,10 @@ class Sum(Function):
 
         Returns:
         -------
-            Tuple[Tensor, float]: Gradient of the input and the derivative of the loss with respect to the dim.
+            Tuple[Tensor, Tensor]: Gradient of the input and the derivative of the loss with respect to the dim.
 
         """
-        return grad_output, 0.0
+        return grad_output, grad_output.zeros((1,))
 
 
 class LT(Function):
@@ -536,8 +536,7 @@ class Permute(Function):
             Tensor: The result of permuting `a` according to `order`.
 
         """
-        ctx.save_for_backward(a)
-        # ctx.save_for_backward(a.shape, a._tensor.strides)
+        ctx.save_for_backward(a.shape, a._tensor.strides)
 
         perm_order = []
         for i in order._tensor.indices():
@@ -546,7 +545,7 @@ class Permute(Function):
         return a._new(a._tensor.permute(*perm_order))
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Computes the backward pass of Permute.
 
         Args:
@@ -556,21 +555,19 @@ class Permute(Function):
 
         Returns:
         -------
-            Tuple[Tensor, float]: Gradient of the input and the derivative of the loss with respect to the order.
+            Tuple[Tensor, Tensor]: Gradient of the input and the derivative of the loss with respect to the order.
 
         """
-        (a,) = ctx.saved_values
-
-        # shape, strides = ctx.saved_values
+        shape, strides = ctx.saved_values
 
         grad_input = minitorch.Tensor.make(
             grad_output._tensor._storage,
-            a.shape,
-            a._tensor.strides,
+            shape,
+            strides,
             backend=grad_output.backend,
         )
 
-        return grad_input, 0.0
+        return grad_input, grad_output.zeros((1,))
 
 
 class View(Function):
@@ -601,14 +598,14 @@ class View(Function):
         )
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
         """Matrix Multiply backward (module 3)"""
         (original,) = ctx.saved_values
         return (
             minitorch.Tensor.make(
                 grad_output._tensor._storage, original, backend=grad_output.backend
             ),
-            0.0,
+            grad_output.zeros((1,)),
         )
 
 
