@@ -174,19 +174,9 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
                     visit(m)
         visited.add(var.unique_id)
         result.insert(0, var)
-        # if var.unique_id not in visited:
-        #     visited.add(var.unique_id)
-        #     # Visit all parents (dependencies) first
-        #     for parent in var.parents:
-        #         visit(parent)
-        #     # After visiting parents, add this variable to the result if it's not constant
-        #     if not var.is_constant():
-        #         result.append(var)
 
     visit(variable)
 
-    # Since we want the variables from the right-most (output) to left-most (input),
-    # reverse the result to reflect this order.
     return result
 
 
